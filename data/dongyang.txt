@@ -1,0 +1,10 @@
+[
+{
+"school": "동양미래대학교",
+"department": "컴퓨터소프트웨어공학과",
+"course_name": "파이썬프로그래밍",
+"source_url": "https://www.dongyang.ac.kr/dmu/
+4577/subview.do",
+"checked_at": "2026-11-10"
+}
+]
