@@ -253,6 +253,10 @@
 
       <!-- [탭 5] 마이페이지 (연동 위젯 & D-Day 생성 위젯 포함) -->
       <section id="tab-mypage" class="p-4 space-y-4 hidden">
+        <button type="button" onclick="openMemberModal()"
+          class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-sm">
+          <i class="fa-solid fa-user-plus mr-1"></i> 회원 정보 등록
+        </button>
         <div class="bg-white p-4 rounded-2xl border border-slate-200/60 flex items-center gap-3">
           <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">S</div>
           <div class="flex-1">
@@ -401,6 +405,96 @@
     </div>
 
   </div>
+
+
+  <!-- Google Sheets 회원 정보 등록 모달 -->
+  <div id="member-modal" class="absolute inset-0 bg-slate-900/60 z-[60] flex items-center justify-center p-4 hidden">
+    <form id="member-form" onsubmit="submitMemberInfo(event)"
+      class="bg-white w-full max-w-sm rounded-2xl p-5 space-y-3 shadow-xl">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-900">회원 정보 등록</h3>
+        <button type="button" onclick="closeMemberModal()" class="text-slate-500 text-xl" aria-label="닫기">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500">입력한 정보는 회원 관리용 구글 시트에 저장됩니다.</p>
+      <div>
+        <label for="member-name" class="block text-xs font-semibold text-slate-600 mb-1">이름 *</label>
+        <input id="member-name" name="name" required maxlength="80"
+          class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm" placeholder="이름 입력">
+      </div>
+      <div>
+        <label for="member-email" class="block text-xs font-semibold text-slate-600 mb-1">이메일 *</label>
+        <input id="member-email" name="email" type="email" required maxlength="254"
+          class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm" placeholder="이메일 입력">
+      </div>
+      <div>
+        <label for="member-organization" class="block text-xs font-semibold text-slate-600 mb-1">소속 / 학교명</label>
+        <input id="member-organization" name="organization" maxlength="120"
+          class="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm" placeholder="선택 입력">
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button type="button" onclick="closeMemberModal()"
+          class="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-lg text-sm font-semibold">취소</button>
+        <button id="member-submit-button" type="submit"
+          class="flex-1 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold">시트에 저장</button>
+      </div>
+      <p id="member-save-message" class="text-xs text-slate-500" role="status"></p>
+    </form>
+  </div>
+
+  <script>
+    const MEMBER_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwWbcy87cEOfQJL_i_eJMJB1ZDzFl8EK-p0kcQQUc_psVKABFvUPooE476lJEhiGOErtA/exec";
+
+    function openMemberModal() {
+      document.getElementById('member-modal').classList.remove('hidden');
+      document.getElementById('member-save-message').textContent = '';
+    }
+
+    function closeMemberModal() {
+      document.getElementById('member-modal').classList.add('hidden');
+    }
+
+    async function submitMemberInfo(event) {
+      event.preventDefault();
+
+      const form = document.getElementById('member-form');
+      const submitButton = document.getElementById('member-submit-button');
+      const message = document.getElementById('member-save-message');
+
+      const payload = {
+        name: form.elements.name.value.trim(),
+        email: form.elements.email.value.trim(),
+        organization: form.elements.organization.value.trim()
+      };
+
+      if (!payload.name || !payload.email) {
+        message.textContent = '이름과 이메일을 입력해 주세요.';
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = '전송 중...';
+      message.textContent = '회원 정보를 전송하고 있습니다.';
+
+      try {
+        // Apps Script의 doPost(e)는 JSON 본문을 읽습니다.
+        // no-cors 응답은 브라우저에서 읽을 수 없으므로 최종 저장 여부는 시트에서 확인해야 합니다.
+        await fetch(MEMBER_SHEET_WEB_APP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        message.textContent = '전송 요청을 보냈습니다. join 시트에 새 행이 추가되었는지 확인해 주세요.';
+        form.reset();
+      } catch (error) {
+        message.textContent = '전송에 실패했습니다. 인터넷 연결과 Apps Script 배포 설정을 확인해 주세요.';
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = '시트에 저장';
+      }
+    }
+  </script>
 
   <script src="js/main.js"></script>
 </body>
