@@ -96,9 +96,54 @@ function renderHashtags(type) {
   ).join('');
 }
 
-function savePlan() {
-  alert('학습계획이 성공적으로 저장되었습니다!');
-  switchTab('home');
+// Google Sheets 학습계획 저장용 웹 앱 주소
+const PLAN_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyQMEHIiEe5vviVt3qIFZ4QMj9pFouCjXV5BNZcXJpSMP5LayS5M3yZVPsFTHu8EAj3CA/exec';
+
+async function savePlan() {
+  const form = document.getElementById('plan-form');
+  const button = form.querySelector('button[type="submit"]');
+  const message = document.getElementById('plan-save-message');
+  const category = document.getElementById('plan-category');
+
+  const payload = {
+    category: category.options[category.selectedIndex].text,
+    organization: document.getElementById('plan-organization').value.trim(),
+    subject: document.getElementById('plan-subject').value.trim(),
+    startDate: document.getElementById('plan-start-date').value,
+    examDate: document.getElementById('plan-exam-date').value,
+    curriculum: document.getElementById('plan-curriculum').value.trim(),
+    url: document.getElementById('plan-url').value.trim()
+  };
+
+  if (!payload.subject) {
+    message.textContent = '학습 과목 / 시험명을 입력해 주세요.';
+    document.getElementById('plan-subject').focus();
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = '구글 시트에 전송 중...';
+  message.textContent = '학습계획 전송 요청 중입니다.';
+
+  try {
+    // no-cors 응답은 브라우저에서 읽을 수 없으므로 실제 저장 여부는 시트에서 확인합니다.
+    await fetch(PLAN_SHEET_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    message.textContent = '전송 요청을 보냈습니다. 구글 시트 plan 탭에서 저장 여부를 확인해 주세요.';
+    alert('학습계획 전송 요청을 완료했습니다. 구글 시트 plan 탭에서 저장 여부를 확인해 주세요.');
+  } catch (error) {
+    console.error('학습계획 저장 요청 오류:', error);
+    message.textContent = '전송에 실패했습니다. 인터넷 연결과 Apps Script 배포 설정을 확인해 주세요.';
+    alert('저장 요청에 실패했습니다. 인터넷 연결을 확인해 주세요.');
+  } finally {
+    button.disabled = false;
+    button.textContent = '학습계획 저장 및 D-Day 생성';
+  }
 }
 
 function openAiModal() { document.getElementById('ai-modal').classList.remove('hidden'); }
