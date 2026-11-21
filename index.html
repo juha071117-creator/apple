@@ -743,8 +743,8 @@
   </div>
 
   <script>
-    const DEPLOYMENT_ID = "AKfycbw2AuhWEcojcchsykJAcA4CcF73WGv4CyUQ9XjA3gfsciG1eNJnaHQ862PKsGwEfCmcBA";
-    const API_URL = "https://script.google.com/macros/s/AKfycbw2AuhWEcojcchsykJAcA4CcF73WGv4CyUQ9XjA3gfsciG1eNJnaHQ862PKsGwEfCmcBA/exec";
+    const DEPLOYMENT_ID = "AKfycbyftL1IOFhH2ayHC7aAQQ_IKBodsAlevDs4ZcGVNTo0BTwxe793-2respV1ydIo7HJTdA";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyftL1IOFhH2ayHC7aAQQ_IKBodsAlevDs4ZcGVNTo0BTwxe793-2respV1ydIo7HJTdA/exec";
     const LIBRARY_URL = "https://script.google.com/macros/library/d/1VbNEjPvnzimTvF9OwDm9AC4GeHEr-folofKdNJZIHE7onH4tccv_njQH/3";
 
     const state = {
@@ -878,6 +878,14 @@
           if (Array.isArray(result.users)) {
             state.registeredUsers = result.users;
           }
+          if (Array.isArray(result.plans) && result.plans.length) {
+            const mine = result.plans.filter(p => !p.userId || String(p.userId) === String(state.user.id));
+            if (mine.length) state.plans = mine;
+          }
+          if (Array.isArray(result.aiQuizzes) && result.aiQuizzes.length) {
+            const mine = result.aiQuizzes.filter(q => !q.userId || String(q.userId) === String(state.user.id));
+            if (mine.length) state.aiQuizzes = mine.map(q => ({ ...q, choices: Array.isArray(q.choices) ? q.choices : (typeof q.choices === 'string' ? JSON.parse(q.choices || '[]') : []) }));
+          }
           if (Array.isArray(result.posts) && result.posts.length > 0) {
             const badgeMap = { univ: '대학교', high: '고등학교', mid: '중학교', etc: '자격증·N수' };
             const existingCommentMap = {};
@@ -903,6 +911,9 @@
             renderCommunityPosts(state.currentCommFilter);
             if (state.activePostId) renderPostDetail(state.activePostId);
           }
+          renderExplore();
+          renderHomeRecentPlan();
+          renderMyPage();
         }
       } catch (err) {
         console.error(err);
@@ -1282,6 +1293,16 @@
       switchTab('home');
     }
 
+    // 탐색 데이터 구글 시트 저장 공통 함수
+    async function sendExploreData(payload) {
+      if (!API_URL) throw new Error('Google Apps Script 주소가 설정되지 않았습니다.');
+      await fetch(API_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ ...payload, deploymentId: DEPLOYMENT_ID, userId: state.user.id })
+      });
+    }
+
     // ---------------------------------------------------------
     // 탐색 탭
     // ---------------------------------------------------------
@@ -1309,6 +1330,11 @@
           item.favorite = !item.favorite;
           showToast(item.favorite ? '즐겨찾기에 추가했습니다.' : '즐겨찾기를 해제했습니다.');
         }
+      }
+      const target = kind === 'plan' ? state.plans.find(p => p.id === id) : state.aiQuizzes.find(q => q.id === id);
+      if (target) {
+        sendExploreData({ action: kind === 'plan' ? 'togglePlanFavorite' : 'toggleQuizFavorite', id, favorite: target.favorite })
+          .catch(err => { console.error(err); showToast('즐겨찾기 서버 저장에 실패했습니다.'); });
       }
       renderExplore();
     }
@@ -1419,7 +1445,10 @@
     function updatePlanProgress(id) {
       const val = Number(document.getElementById('modal-progress-range').value);
       const plan = state.plans.find(p => p.id === id);
-      if (plan) plan.progress = val;
+      if (plan) {
+        plan.progress = val;
+        sendExploreData({ action: 'updatePlanProgress', id, progress: val }).catch(err => { console.error(err); showToast('진도율 서버 저장에 실패했습니다.'); });
+      }
       closeExploreDetailModal();
       renderExplore();
       renderHomeRecentPlan();
@@ -1533,8 +1562,9 @@
     function saveAiResultToExplore() {
       if (state.lastGeneratedQuiz) {
         state.aiQuizzes.unshift(state.lastGeneratedQuiz);
+        sendExploreData({ action: 'saveQuiz', quiz: state.lastGeneratedQuiz }).catch(err => { console.error(err); showToast('AI 문제지의 구글 시트 저장 요청에 실패했습니다.'); });
         renderExplore();
-        showToast('AI 문제지가 탐색 보관함에 저장되었습니다.');
+        showToast('AI 문제지를 탐색 보관함에 저장하고 있습니다.');
       }
     }
 

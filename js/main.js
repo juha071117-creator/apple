@@ -97,7 +97,7 @@ function renderHashtags(type) {
 }
 
 // Google Sheets 학습계획 저장용 웹 앱 주소
-const PLAN_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwmonG39ORs7Ze2mW6CUDNOdnHTzY0M5N34ywZa_NB2mriuqA42BCqVlFnaZXjdG3uP/exec';
+const PLAN_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyftL1IOFhH2ayHC7aAQQ_IKBodsAlevDs4ZcGVNTo0BTwxe793-2respV1ydIo7HJTdA/exec';
 
 async function savePlan() {
   const form = document.getElementById('plan-form');
@@ -131,7 +131,7 @@ async function savePlan() {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ action: 'savePlan', userId: (window.studyMateUserId || 'guest'), plan: payload })
     });
 
     message.textContent = '전송 요청을 보냈습니다. 구글 시트 plan 탭에서 저장 여부를 확인해 주세요.';

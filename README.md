@@ -70,3 +70,15 @@ git push -u origin main
 - 브라우저의 CORS 제한 때문에 `no-cors` 방식으로 요청하므로 화면에서 서버의 실제 처리 결과를 판독할 수 없습니다. Google 스프레드시트에서 행이 추가되었는지 확인해야 합니다.
 - Apps Script 배포 설정에서 웹 앱 접근 권한을 앱 사용자가 접근할 수 있도록 설정하고, `doPost(e)`가 요청 본문의 JSON을 읽어 시트에 기록하도록 구성되어 있어야 합니다.
 - 이 프로젝트 파일에는 Apps Script 서버 코드가 포함되어 있지 않으므로, 시트 탭 이름과 열 구조 및 `doPost(e)` 구현은 배포된 스크립트 설정에 따릅니다.
+
+
+## 탐색 탭 Google Sheets 연동
+
+탐색 탭은 아래 시트를 사용합니다. `Code.gs`를 Apps Script 프로젝트에 반영한 뒤 `setupStudyMateSheets()`를 1회 실행하면 시트가 준비됩니다.
+
+- `explore_plans`: 학습계획, 진도율, 즐겨찾기
+- `explore_ai_quizzes`: AI 문제지, 선택지, 정답, 해설, 즐겨찾기
+- `join`: 회원가입 정보
+- `posts`, `comments`, `likes`: 커뮤니티 데이터
+
+웹 앱 배포 주소는 `index.html`에 설정되어 있습니다. 배포된 Apps Script의 기존 코드를 새 `Code.gs`로 교체한 뒤 **배포 > 배포 관리 > 수정 > 새 버전**으로 업데이트해야 실제 저장이 작동합니다. 브라우저의 `no-cors` 요청은 서버 응답을 읽을 수 없으므로 저장 여부는 구글 시트에서 확인합니다.
