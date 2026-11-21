@@ -744,7 +744,7 @@
 
   <script>
     const DEPLOYMENT_ID = "AKfycbzgTn1ytXFFZ6TdbdvdmZXSunY9vV1-k09HYzytOPAORvD-h_dX8nRFRRLyHFZVvyS2Dw";
-    const API_URL = "https://script.google.com/macros/s/AKfycbzgTn1ytXFFZ6TdbdvdmZXSunY9vV1-k09HYzytOPAORvD-h_dX8nRFRRLyHFZVvyS2Dw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxepjYIFkkc02zoNU1bYXSyH08b6nJyw6Fnazy0sw2hdeQLt5mXyEgMpwWO8WxPMCU1Jg/exec";
     const LIBRARY_URL = "https://script.google.com/macros/library/d/1VbNEjPvnzimTvF9OwDm9AC4GeHEr-folofKdNJZIHE7onH4tccv_njQH/3";
 
     const state = {
@@ -1219,35 +1219,66 @@
       }
     }
 
-    function handleSavePlan() {
+    async function handleSavePlan() {
       const category = document.getElementById('plan-category').value;
       const school = document.getElementById('plan-school').value.trim() || '소속 미입력';
       const subject = document.getElementById('plan-subject').value.trim();
       const exam = document.getElementById('plan-exam').value.trim();
-      const start = document.getElementById('plan-start').value || '2026.11.21';
-      const end = document.getElementById('plan-end').value || '2026.12.05';
+      const start = document.getElementById('plan-start').value || new Date().toISOString().slice(0, 10);
+      const end = document.getElementById('plan-end').value || '';
       const content = document.getElementById('plan-content').value.trim();
       const fileLabel = document.getElementById('plan-file-label').innerText;
       const urlVal = document.getElementById('plan-url-input').value.trim();
 
-      state.plans.unshift({
+      if (!subject || !exam) {
+        alert('과목명과 시험·목표명을 입력하세요.');
+        return;
+      }
+
+      const newPlan = {
         id: Date.now(),
+        userId: state.user.id,
         category,
         school,
         subject,
         exam,
+        start,
+        end,
         period: `${start} ~ ${end}`,
         content,
         progress: 10,
         favorite: false,
         attachment: fileLabel.includes('없음') ? '' : fileLabel,
         url: urlVal
-      });
+      };
 
+      // 화면에 먼저 반영하고 Google Sheets에도 저장합니다.
+      state.plans.unshift(newPlan);
       renderHomeRecentPlan();
       renderExplore();
       renderMyPage();
-      showToast('새 학습계획이 저장되었습니다.');
+
+      if (API_URL && !state.user.isGuest) {
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'savePlan',
+              userId: state.user.id,
+              plan: newPlan
+            })
+          });
+          showToast('학습계획을 저장 요청했습니다. 구글 시트 반영을 확인하세요.');
+        } catch (err) {
+          console.error('Google Sheets 저장 오류:', err);
+          showToast('화면에는 저장했지만 구글 시트 전송에 실패했습니다.');
+        }
+      } else {
+        showToast('게스트 모드에서는 구글 시트에 저장되지 않습니다.');
+      }
+
       switchTab('home');
     }
 
