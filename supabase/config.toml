@@ -1,0 +1,3 @@
+[functions.username-auth]
+verify_jwt = true
+entrypoint = "./functions/username-auth/index.js"

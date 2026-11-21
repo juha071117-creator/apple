@@ -14,59 +14,35 @@
 
 ## 프로젝트 구조
 
-```text
-StudyMate_Project/
-├── index.html              # 앱 진입 페이지
-├── README.md               # 프로젝트 소개
-├── .gitignore              # Git 제외 파일 설정
-├── LICENSE                 # MIT License
-├── css/
-│   └── style.css           # 스타일
-├── js/
-│   └── app.js              # 앱 동작 로직
-├── data/
-│   └── README.md           # 데이터 파일 안내
-└── assets/
-    ├── README.md           # 정적 리소스 안내
-    └── images/             # 이미지 리소스
-```
+- `index.html`에 실행 화면과 이벤트 처리 코드가 있습니다.
+- `js/supabase-config.js`에서 프로젝트 URL과 publishable key를 설정합니다.
+- `js/supabase-plans.js`에서 Supabase Auth, Database와 Storage를 호출합니다.
+- `supabase/migrations/`에 DB 스키마 및 접근 정책이 있습니다.
 
-## 실행 방법
+## 로컬 실행
 
-별도의 서버 설치 없이 실행할 수 있습니다.
+1. 개발용 Supabase 프로젝트에서 Data API에 public 스키마를 노출합니다.
+2. SQL Editor에서 아직 적용하지 않은 `supabase/migrations/` 파일을 이름 순으로 실행합니다. 이미 적용한 마이그레이션은 다시 실행하지 않습니다.
+3. 기존 게스트 동작을 사용하려면 Authentication에서 익명 로그인을 활성화합니다. 아이디 가입은 기존 이메일 확인 설정과 독립적으로 동작합니다.
+4. `js/supabase-config.js`에 개발 프로젝트 URL과 publishable key를 입력합니다. 브라우저 설정 파일에는 secret key나 service_role 키를 넣지 않습니다.
+5. 저장소 루트에서 로컬 HTTP 서버로 `index.html`을 엽니다. 예를 들어 Python이 설치된 경우 `python -m http.server 4173 --bind 127.0.0.1`을 실행하고 `http://127.0.0.1:4173/`을 엽니다.
 
-1. 프로젝트를 다운로드하거나 Clone합니다.
-2. `index.html` 파일을 웹 브라우저에서 엽니다.
+## 아이디 인증 서버
 
-일부 브라우저 기능이나 향후 API 연동을 위해 로컬 개발 서버 사용을 권장합니다.
+- `supabase/functions/username-auth/`의 Edge Function은 아이디의 정규화된 값에서 서버 전용 HMAC 키로 내부 인증 계정을 결정합니다. Supabase Auth가 비밀번호와 세션을 관리합니다.
+- 마이그레이션은 아이디 매핑 키를 개발 DB에 한 번 생성합니다. 함수만 서비스 역할로 조회할 수 있습니다. 기존 아이디 로그인을 유지하려면 키와 네임스페이스를 보존해야 합니다. 허용 오리진은 기본값인 `http://127.0.0.1:4183` 또는 `STUDYMATE_AUTH_ORIGINS`에 설정한 목록이며, 내부 네임스페이스는 프로젝트 URL에서 가져오거나 `STUDYMATE_AUTH_NAMESPACE`로 지정합니다.
+- 승인 후 개발 프로젝트에 새 마이그레이션과 Edge Function을 적용합니다. 공개 페이지를 아직 배포하지 않았다면 개발 오리진만 허용합니다. 로컬 서버만 별도로 실행할 때는 같은 개발 프로젝트에 연결된 함수 URL을 `js/supabase-config.js`의 선택 항목 `usernameAuthUrl`에 지정할 수 있습니다.
+- 아이디 로그인에는 이메일을 입력하거나 SMTP를 사용할 필요가 없습니다. 이메일 기반 비밀번호 재설정은 아이디 계정에 제공되지 않습니다. 현재 함수는 계정별/프로젝트별 분당 시도 제한을 적용합니다.
 
-## GitHub에 올리는 방법
+## 데이터 동작
 
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/사용자명/저장소명.git
-git push -u origin main
-```
-
-## 기술 구성
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- LocalStorage
+- 신규 회원은 아이디와 비밀번호를 사용합니다. 학교 정보는 가입 때 받아 첫 로그인 시 프로필에 반영합니다. 기존 이메일 계정 중 등록된 표시용 아이디가 있고 중복되지 않는 계정은 그 아이디와 기존 비밀번호로 같은 계정에 로그인할 수 있습니다. 기존 계정 및 데이터는 보존합니다.
+- 게스트도 개인 데이터를 저장할 수 있습니다. 같은 브라우저에서 게스트 데이터 이전에 동의한 뒤 회원 로그인에 성공하면, 기존 학습계획과 첨부 접근 권한을 회원에게 옮기고 과제·디데이·문제지 등 개인 데이터를 복사합니다.
+- 학습계획은 홈·탐색·마이페이지에 표시되며 작성자만 읽고 수정할 수 있습니다. 공유 버튼은 사용자가 확인한 과목명과 시험명을 클립보드에 복사합니다.
+- 첨부 파일은 비공개 버킷에 10MB까지 저장합니다. 파일 업로드 후 계획 저장이 실패하면 참조 없는 파일이 남을 수 있고 프로젝트 관리자가 Storage에서 정리할 수 있습니다.
+- 커뮤니티 글과 댓글은 익명 표시를 선택할 수 있습니다. 게스트는 읽을 수 있고 회원은 글·댓글 작성과 좋아요를 할 수 있습니다. 알림 환경설정은 저장되며 브라우저 푸시 발송은 포함하지 않습니다.
+- `index.html`의 저장 경로는 Supabase를 사용합니다. 별도 프로토타입의 Google Sheets 코드인 `js/app.js`와 `js/main.js`는 이 화면에서 로드하지 않습니다.
 
 ## 라이선스
 
 이 프로젝트는 MIT License를 따릅니다.
-
-
-## Google Sheets 연동
-
-- Google Apps Script 웹 앱 주소는 `js/main.js`, `js/app.js`, `index.html`에 설정되어 있습니다.
-- 학습계획 저장 시 `POST` 요청으로 JSON 데이터를 전송합니다.
-- 브라우저의 CORS 제한 때문에 `no-cors` 방식으로 요청하므로 화면에서 서버의 실제 처리 결과를 판독할 수 없습니다. Google 스프레드시트에서 행이 추가되었는지 확인해야 합니다.
-- Apps Script 배포 설정에서 웹 앱 접근 권한을 앱 사용자가 접근할 수 있도록 설정하고, `doPost(e)`가 요청 본문의 JSON을 읽어 시트에 기록하도록 구성되어 있어야 합니다.
-- 이 프로젝트 파일에는 Apps Script 서버 코드가 포함되어 있지 않으므로, 시트 탭 이름과 열 구조 및 `doPost(e)` 구현은 배포된 스크립트 설정에 따릅니다.
