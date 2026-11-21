@@ -743,8 +743,8 @@
   </div>
 
   <script>
-    const DEPLOYMENT_ID = "AKfycbzgTn1ytXFFZ6TdbdvdmZXSunY9vV1-k09HYzytOPAORvD-h_dX8nRFRRLyHFZVvyS2Dw";
-    const API_URL = "https://script.google.com/macros/s/AKfycbxepjYIFkkc02zoNU1bYXSyH08b6nJyw6Fnazy0sw2hdeQLt5mXyEgMpwWO8WxPMCU1Jg/exec";
+    const DEPLOYMENT_ID = "AKfycbyTaj1pBAFoqXfhn_9luEviYuM91PMptrGm9SwUW94hGqynU4WZpJ2xX4e-9IbkHXtGQ";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyTaj1pBAFoqXfhn_9luEviYuM91PMptrGm9SwUW94hGqynU4WZpJ2xX4e-9IbkHXtGQ/exec";
     const LIBRARY_URL = "https://script.google.com/macros/library/d/1VbNEjPvnzimTvF9OwDm9AC4GeHEr-folofKdNJZIHE7onH4tccv_njQH/3";
 
     const state = {
@@ -993,7 +993,7 @@
           await fetch(API_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: 'signup',
               deploymentId: DEPLOYMENT_ID,

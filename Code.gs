@@ -30,7 +30,19 @@ function setupJoinSheet() {
 
 /** 웹 앱 연결 확인 */
 function doGet() {
-  return jsonOutput({ status: 'success', message: 'Study Mate join API is running', sheet: SHEET_NAME });
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  let users = [];
+  if (sheet && sheet.getLastRow() >= 2) {
+    const values = sheet.getRange(2, 1, sheet.getLastRow() - 1, HEADERS.length).getValues();
+    users = values.map(row => ({
+      '가입일시': row[0] instanceof Date ? Utilities.formatDate(row[0], Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss') : row[0],
+      '아이디': String(row[1] || ''),
+      '학교명': String(row[2] || ''),
+      '학교구분': String(row[3] || '')
+    }));
+  }
+  return jsonOutput({ status: 'success', message: 'Study Mate join API is running', sheet: SHEET_NAME, users });
 }
 
 /** 회원가입 정보 저장: action=signup */
