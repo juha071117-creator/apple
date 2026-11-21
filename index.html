@@ -35,7 +35,6 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
-    /* 버튼 프레스(눌림) 상호작용 효과 */
     .btn-press {
       transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, background-color 0.15s ease;
       cursor: pointer;
@@ -119,7 +118,7 @@
           </button>
         </form>
 
-        <!-- 회원가입 폼 (4가지 항목) -->
+        <!-- 회원가입 폼 -->
         <form id="signup-form" onsubmit="event.preventDefault(); handleSignup();" class="space-y-3 hidden">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">아이디 *</label>
@@ -134,7 +133,7 @@
               <label class="text-xs font-bold text-slate-700">학교명 / 소속</label>
               <span class="text-[10px] text-rose-400">선택 입력</span>
             </div>
-            <input type="text" id="signup-school" placeholder="예: 한국대학교, 서울고, 독학 (미입력 가능)" class="w-full px-3.5 py-2.5 bg-white border border-pink-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-rose-400">
+            <input type="text" id="signup-school" placeholder="예: 한국대학교, 서울고 (미입력 가능)" class="w-full px-3.5 py-2.5 bg-white border border-pink-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-rose-400">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">학교 · 학습 구분 *</label>
@@ -190,7 +189,6 @@
 
       <!-- [TAB 1] 홈 화면 -->
       <section id="tab-home" class="p-4 space-y-4 animate-fade">
-        <!-- 마감 임박 과제 · 숙제 위젯 -->
         <div class="bg-white/95 rounded-2xl p-4 border border-pink-200/80 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
@@ -205,7 +203,6 @@
           <div id="urgent-homework-list" class="space-y-2"></div>
         </div>
 
-        <!-- 스터디 메이트 안내 섹션 -->
         <div class="bg-gradient-to-br from-rose-500 via-pink-500 to-pink-600 text-white p-5 rounded-2xl shadow-lg shadow-pink-200/80 relative overflow-hidden">
           <div class="relative z-10">
             <span class="inline-block text-[10px] font-bold bg-white/25 px-2.5 py-0.5 rounded-full backdrop-blur-sm">STUDY MATE AI</span>
@@ -215,7 +212,6 @@
           <i class="fa-solid fa-graduation-cap absolute -right-3 -bottom-3 text-7xl text-white/15"></i>
         </div>
 
-        <!-- 빠른 실행 버튼 -->
         <div class="grid grid-cols-2 gap-3">
           <button onclick="switchTab('plan')" class="btn-press bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm text-left">
             <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center mb-2.5 text-sm">
@@ -234,7 +230,6 @@
           </button>
         </div>
 
-        <!-- 최근 저장한 학습계획 위젯 -->
         <div class="bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-extrabold text-rose-600">최근 저장한 학습계획</h3>
@@ -243,7 +238,6 @@
           <div id="home-recent-plan-card" class="bg-rose-50/70 p-3.5 rounded-xl border border-pink-100"></div>
         </div>
 
-        <!-- 주요 D-Day 일정 위젯 -->
         <div class="bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-extrabold text-rose-600">주요 D-Day 일정</h3>
@@ -253,20 +247,18 @@
         </div>
       </section>
 
-      <!-- [TAB 2] 탐색 화면 (버튼 프레스 상호작용 강화) -->
+      <!-- [TAB 2] 탐색 화면 -->
       <section id="tab-explore" class="p-4 space-y-4 hidden animate-fade">
         <div>
           <h2 class="text-base font-extrabold text-slate-900">학습 탐색 · 인터랙티브 보관함</h2>
           <p class="text-xs text-rose-500/80 mt-0.5">각 버튼을 눌러 상세 진도율 조절, AI 문제 풀기, 즐겨찾기를 실행해보세요.</p>
         </div>
 
-        <!-- 검색 입력창 -->
         <div class="relative">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-400 text-xs"></i>
           <input type="text" id="explore-search-input" oninput="renderExplore()" placeholder="과목명, 시험명, AI 문제 키워드 검색..." class="w-full pl-9 pr-3.5 py-2.5 bg-white border border-pink-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400">
         </div>
 
-        <!-- 인터랙티브 카테고리 필터 버튼 -->
         <div class="flex gap-1.5 text-xs font-bold overflow-x-auto hide-scrollbar pb-1">
           <button onclick="filterExplore('all')" id="exp-btn-all" class="btn-press px-3.5 py-1.5 rounded-full bg-rose-500 text-white shadow-sm shrink-0">전체보기</button>
           <button onclick="filterExplore('plan')" id="exp-btn-plan" class="btn-press px-3.5 py-1.5 rounded-full bg-white text-rose-600 border border-pink-200 shrink-0">학습계획</button>
@@ -355,7 +347,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-base font-extrabold text-slate-900">전국 학습 커뮤니티</h2>
-            <p class="text-xs text-rose-500/80">학교별·과목별 학습 계획과 진행도를 공유하세요.</p>
+            <p class="text-xs text-rose-500/80">글을 눌러 상세 내용을 확인하고 댓글을 남겨보세요.</p>
           </div>
           <button onclick="openPostModal()" class="btn-press px-3 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm">
             <i class="fa-solid fa-pen"></i>
@@ -395,7 +387,6 @@
           </button>
         </div>
 
-        <!-- D-Day 일정 위젯 -->
         <div class="bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
@@ -409,14 +400,13 @@
           <div id="mypage-dday-grid" class="grid grid-cols-2 gap-2"></div>
         </div>
 
-        <!-- 학습계획 현황 위젯 -->
         <div class="bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
               <i class="fa-solid fa-chart-pie text-rose-500"></i>
               <span>학습계획 진행 현황</span>
             </h3>
-            <button onclick="openMySubPage('plans')" class="btn-press text-[11px] font-bold text-rose-600">전체보기 ></button>
+            <button onclick="openMySubPage('plans')" class="btn-press text-[11px] font-bold text-rose-600">전체보기 &gt;</button>
           </div>
 
           <div class="grid grid-cols-3 gap-2 bg-rose-50/70 p-3 rounded-xl text-center border border-pink-100">
@@ -437,7 +427,6 @@
           <div id="mypage-linked-plans" class="space-y-2"></div>
         </div>
 
-        <!-- 세부 이동 메뉴 -->
         <div class="bg-white/95 rounded-2xl border border-pink-200/80 divide-y divide-pink-100 overflow-hidden shadow-sm">
           <button onclick="openMySubPage('school')" class="btn-press w-full px-4 py-3.5 flex items-center justify-between text-left">
             <div class="flex items-center gap-3">
@@ -688,6 +677,33 @@
       </div>
     </div>
 
+    <!-- 모달 5-2: 커뮤니티 게시글 상세보기 & 댓글 작성 페이지 -->
+    <div id="post-detail-modal" class="fixed inset-0 max-w-[430px] mx-auto bg-rose-50 z-50 flex flex-col hidden animate-fade">
+      <div class="h-14 bg-white border-b border-pink-200 px-4 flex items-center justify-between shrink-0">
+        <button onclick="closePostDetail()" class="btn-press text-xs font-bold text-slate-600 flex items-center gap-1.5">
+          <i class="fa-solid fa-chevron-left"></i> 목록으로
+        </button>
+        <h3 class="font-extrabold text-slate-900 text-sm">게시글 상세</h3>
+        <div class="w-14"></div>
+      </div>
+
+      <div id="post-detail-content" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+
+      <!-- 하단 고정 댓글 작성 바 (익명 체크박스 포함) -->
+      <div class="bg-white border-t border-pink-200 p-3 shrink-0">
+        <form onsubmit="event.preventDefault(); submitComment();" class="flex items-center gap-2">
+          <label class="btn-press flex items-center gap-1 text-[11px] font-bold text-rose-600 bg-pink-50 px-2.5 py-2 rounded-xl border border-pink-200 shrink-0 cursor-pointer">
+            <input type="checkbox" id="comment-anon-check" checked class="rounded text-rose-500 accent-rose-500">
+            <span>익명</span>
+          </label>
+          <input type="text" id="comment-input" required placeholder="댓글을 입력하세요..." class="flex-1 px-3 py-2 bg-rose-50/50 border border-pink-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400">
+          <button type="submit" class="btn-press px-3.5 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold rounded-xl text-xs shrink-0 shadow-xs">
+            등록
+          </button>
+        </form>
+      </div>
+    </div>
+
     <!-- 모달 6: D-Day 추가 -->
     <div id="dday-modal" class="fixed inset-0 max-w-[430px] mx-auto bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden">
       <div class="bg-white w-full max-w-xs rounded-2xl p-5 space-y-4">
@@ -733,6 +749,9 @@
 
     const state = {
       exploreFilter: 'all',
+      currentCommFilter: 'all',
+      activePostId: null,
+      likedPosts: {}, // 사용자별 1인 1회 좋아요 기록 { "userId_postId": true }
       user: {
         id: 'studymate01',
         schoolName: '한국대학교 · 컴퓨터공학과',
@@ -814,7 +833,10 @@
           author: '익명 (컴공 24)',
           time: '12분 전',
           likes: 18,
-          comments: 4
+          commentList: [
+            { id: 1, author: '익명', text: '저도 방금 PDF 올려서 문제 만들어봤는데 퀄리티 좋네요!', time: '8분 전' },
+            { id: 2, author: 'algo_master', text: 'DP 파트 기출 정리본도 공유 가능할까요?', time: '3분 전' }
+          ]
         },
         {
           id: 302,
@@ -828,7 +850,9 @@
           author: '익명 (고2)',
           time: '45분 전',
           likes: 27,
-          comments: 6
+          commentList: [
+            { id: 3, author: '익명', text: '사인법칙 코사인법칙 변형문제 뽑아보니까 도움 많이 돼요!', time: '20분 전' }
+          ]
         }
       ],
       selectedPostTags: []
@@ -843,7 +867,7 @@
     }
 
     // ---------------------------------------------------------
-    // 백그라운드 동기화 (UI 문구 노출 없음)
+    // 백그라운드 동기화
     // ---------------------------------------------------------
     async function syncBackendData() {
       if (!API_URL) return;
@@ -856,21 +880,28 @@
           }
           if (Array.isArray(result.posts) && result.posts.length > 0) {
             const badgeMap = { univ: '대학교', high: '고등학교', mid: '중학교', etc: '자격증·N수' };
-            state.posts = result.posts.map(row => ({
-              id: row['ID'] || Date.now(),
-              schoolType: row['학교구분'] || 'univ',
-              schoolBadge: badgeMap[row['학교구분']] || row['학교구분'] || '대학교',
-              schoolName: row['학교명'] || '미입력',
-              subject: row['과목명'] || '',
-              exam: row['시험명'] || '',
-              tags: row['해시태그'] ? String(row['해시태그']).split(',').map(t => t.trim()).filter(Boolean) : [],
-              content: row['내용'] || '',
-              author: row['작성자'] || '익명',
-              time: row['작성일시'] || '방금 전',
-              likes: Number(row['좋아요'] || 0),
-              comments: 0
-            }));
-            renderCommunityPosts('all');
+            const existingCommentMap = {};
+            state.posts.forEach(p => { existingCommentMap[String(p.id)] = p.commentList || []; });
+
+            state.posts = result.posts.map(row => {
+              const postId = row['ID'] || Date.now();
+              return {
+                id: postId,
+                schoolType: row['학교구분'] || 'univ',
+                schoolBadge: badgeMap[row['학교구분']] || row['학교구분'] || '대학교',
+                schoolName: row['학교명'] || '미입력',
+                subject: row['과목명'] || '',
+                exam: row['시험명'] || '',
+                tags: row['해시태그'] ? String(row['해시태그']).split(',').map(t => t.trim()).filter(Boolean) : [],
+                content: row['내용'] || '',
+                author: row['작성자'] || '익명',
+                time: row['작성일시'] || '방금 전',
+                likes: Number(row['좋아요'] || 0),
+                commentList: existingCommentMap[String(postId)] || []
+              };
+            });
+            renderCommunityPosts(state.currentCommFilter);
+            if (state.activePostId) renderPostDetail(state.activePostId);
           }
         }
       } catch (err) {
@@ -882,6 +913,11 @@
     // 앱 실행 스플래시 & 초기화
     // ---------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedLikes = localStorage.getItem('studymate_liked_posts');
+        if (savedLikes) state.likedPosts = JSON.parse(savedLikes);
+      } catch (e) {}
+
       let progress = 0;
       const bar = document.getElementById('loading-bar');
       const timer = setInterval(() => {
@@ -1030,8 +1066,7 @@
       renderHomeRecentPlan();
       renderDdays();
       renderExplore();
-      selectCommSchoolTab('all');
-      renderCommunityPosts('all');
+      selectCommSchoolTab(state.currentCommFilter);
       renderMyPage();
     }
 
@@ -1217,7 +1252,7 @@
     }
 
     // ---------------------------------------------------------
-    // 탐색 탭 (버튼 프레스 상호작용 + 상세/퀴즈 모달)
+    // 탐색 탭
     // ---------------------------------------------------------
     function filterExplore(type) {
       state.exploreFilter = type;
@@ -1473,9 +1508,15 @@
     }
 
     // ---------------------------------------------------------
-    // 커뮤니티
+    // 커뮤니티 (게시글 상세보기 + 1인 1회 좋아요 + 익명 댓글)
     // ---------------------------------------------------------
+    function hasUserLiked(postId) {
+      const key = `${state.user.id}_${postId}`;
+      return !!state.likedPosts[key];
+    }
+
     function selectCommSchoolTab(type) {
+      state.currentCommFilter = type;
       ['all', 'univ', 'high', 'mid', 'etc'].forEach(t => {
         const btn = document.getElementById(`comm-tab-${t}`);
         btn.className = t === type
@@ -1512,44 +1553,174 @@
         return;
       }
 
-      container.innerHTML = list.map(p => `
-        <article class="bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-2">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-pink-50 text-rose-700 border border-pink-200">${p.schoolBadge} · ${p.schoolName}</span>
-              <span class="text-[10px] font-bold text-rose-500">${p.subject} (${p.exam})</span>
+      container.innerHTML = list.map(p => {
+        const liked = hasUserLiked(p.id);
+        const commentCount = Array.isArray(p.commentList) ? p.commentList.length : 0;
+
+        return `
+          <article onclick="openPostDetail('${p.id}')" class="btn-press bg-white/95 p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-2 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5 min-w-0 pr-2">
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-pink-50 text-rose-700 border border-pink-200 shrink-0">${p.schoolBadge} · ${p.schoolName}</span>
+                <span class="text-[10px] font-bold text-rose-500 truncate">${p.subject} (${p.exam})</span>
+              </div>
+              <span class="text-[10px] text-slate-400 shrink-0">${p.time}</span>
             </div>
-            <span class="text-[10px] text-slate-400">${p.time}</span>
-          </div>
-          <p class="text-xs text-slate-800 leading-relaxed">${p.content}</p>
-          <div class="flex flex-wrap gap-1">
-            ${p.tags.map(t => `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">${t}</span>`).join('')}
-          </div>
-          <div class="flex items-center justify-between pt-2 border-t border-pink-100 text-[11px] text-slate-400">
-            <span>${p.author}</span>
-            <div class="flex items-center gap-3">
-              <button onclick="likePost('${p.id}')" class="btn-press text-rose-500 font-bold flex items-center gap-1">
-                <i class="fa-solid fa-heart"></i> ${p.likes}
-              </button>
-              <span class="flex items-center gap-1"><i class="fa-regular fa-comment"></i> ${p.comments}</span>
+            <p class="text-xs text-slate-800 leading-relaxed">${p.content}</p>
+            <div class="flex flex-wrap gap-1">
+              ${p.tags.map(t => `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">${t}</span>`).join('')}
             </div>
-          </div>
-        </article>
-      `).join('');
+            <div class="flex items-center justify-between pt-2 border-t border-pink-100 text-[11px] text-slate-400">
+              <span>${p.author}</span>
+              <div class="flex items-center gap-3">
+                <button type="button" onclick="event.stopPropagation(); likePost('${p.id}')" class="btn-press ${liked ? 'text-rose-600 font-extrabold' : 'text-slate-400 font-bold'} flex items-center gap-1 px-1.5 py-0.5 rounded-lg ${liked ? 'bg-rose-50' : ''}">
+                  <i class="${liked ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart"></i> ${p.likes}
+                </button>
+                <button type="button" onclick="event.stopPropagation(); openPostDetail('${p.id}', true)" class="btn-press text-slate-500 hover:text-rose-600 font-bold flex items-center gap-1 px-1.5 py-0.5 rounded-lg">
+                  <i class="fa-regular fa-comment"></i> ${commentCount}
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
     }
 
+    // 게시글 상세 페이지 열기
+    function openPostDetail(id, focusComment = false) {
+      state.activePostId = String(id);
+      renderPostDetail(state.activePostId);
+      document.getElementById('post-detail-modal').classList.remove('hidden');
+      if (focusComment) {
+        setTimeout(() => document.getElementById('comment-input').focus(), 150);
+      }
+    }
+
+    function closePostDetail() {
+      state.activePostId = null;
+      document.getElementById('post-detail-modal').classList.add('hidden');
+      renderCommunityPosts(state.currentCommFilter);
+    }
+
+    function renderPostDetail(id) {
+      const post = state.posts.find(p => String(p.id) === String(id));
+      if (!post) return;
+
+      const liked = hasUserLiked(post.id);
+      const comments = post.commentList || [];
+
+      document.getElementById('post-detail-content').innerHTML = `
+        <div class="bg-white p-4 rounded-2xl border border-pink-200/80 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-pink-100 text-rose-600 flex items-center justify-center font-extrabold text-xs">
+                ${post.author.startsWith('익명') ? '익' : post.author[0].toUpperCase()}
+              </div>
+              <div>
+                <p class="text-xs font-extrabold text-slate-900">${post.author}</p>
+                <p class="text-[10px] text-slate-400">${post.schoolBadge} · ${post.schoolName} · ${post.time}</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold bg-rose-50 text-rose-600 px-2 py-0.5 rounded border border-pink-200">${post.subject}</span>
+          </div>
+
+          <div class="pt-1">
+            <span class="inline-block text-[11px] font-extrabold text-rose-600 mb-1">[${post.exam}]</span>
+            <p class="text-xs text-slate-800 leading-relaxed whitespace-pre-line">${post.content}</p>
+          </div>
+
+          <div class="flex flex-wrap gap-1 pt-1">
+            ${post.tags.map(t => `<span class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">${t}</span>`).join('')}
+          </div>
+
+          <div class="flex items-center gap-3 pt-3 border-t border-pink-100">
+            <button type="button" onclick="likePost('${post.id}')" class="btn-press px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border ${liked ? 'bg-rose-500 text-white border-rose-500 shadow-xs' : 'bg-pink-50 text-rose-600 border-pink-200'}">
+              <i class="${liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              <span>공감 ${post.likes}</span>
+            </button>
+            <span class="text-xs font-bold text-slate-500 flex items-center gap-1">
+              <i class="fa-regular fa-comment text-rose-400"></i> 댓글 ${comments.length}개
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="text-xs font-extrabold text-slate-800 px-1">댓글 (${comments.length})</h4>
+          ${comments.length === 0
+            ? `<div class="bg-white/80 p-5 rounded-2xl border border-pink-100 text-center text-xs text-slate-400">아직 작성된 댓글이 없습니다. 첫 댓글을 남겨보세요!</div>`
+            : comments.map(c => `
+                <div class="bg-white p-3.5 rounded-2xl border border-pink-100 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-extrabold ${c.author === '익명' ? 'text-rose-600' : 'text-slate-800'}">${c.author}</span>
+                    <span class="text-[10px] text-slate-400">${c.time}</span>
+                  </div>
+                  <p class="text-xs text-slate-700 leading-relaxed">${c.text}</p>
+                </div>
+              `).join('')
+          }
+        </div>
+      `;
+    }
+
+    // 댓글 등록 (익명 여부 선택 가능)
+    function submitComment() {
+      if (!state.activePostId) return;
+      const input = document.getElementById('comment-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const isAnon = document.getElementById('comment-anon-check').checked;
+      const post = state.posts.find(p => String(p.id) === String(state.activePostId));
+      if (!post) return;
+
+      if (!Array.isArray(post.commentList)) post.commentList = [];
+      post.commentList.push({
+        id: Date.now(),
+        author: isAnon ? '익명' : state.user.id,
+        text,
+        time: '방금 전'
+      });
+
+      input.value = '';
+      renderPostDetail(state.activePostId);
+      renderCommunityPosts(state.currentCommFilter);
+      showToast(isAnon ? '익명 댓글이 등록되었습니다.' : '댓글이 등록되었습니다.');
+    }
+
+    // 1인 1회 좋아요 제한 및 토글
     async function likePost(id) {
       const post = state.posts.find(p => String(p.id) === String(id));
-      if (post) post.likes += 1;
-      renderCommunityPosts('all');
+      if (!post) return;
 
-      if (API_URL) {
+      const likeKey = `${state.user.id}_${id}`;
+      const alreadyLiked = !!state.likedPosts[likeKey];
+
+      if (alreadyLiked) {
+        delete state.likedPosts[likeKey];
+        post.likes = Math.max(0, post.likes - 1);
+        showToast('공감을 취소했습니다.');
+      } else {
+        state.likedPosts[likeKey] = true;
+        post.likes += 1;
+        showToast('게시글에 공감했습니다.');
+      }
+
+      try {
+        localStorage.setItem('studymate_liked_posts', JSON.stringify(state.likedPosts));
+      } catch (e) {}
+
+      renderCommunityPosts(state.currentCommFilter);
+      if (state.activePostId && String(state.activePostId) === String(id)) {
+        renderPostDetail(id);
+      }
+
+      if (API_URL && !alreadyLiked) {
         try {
           await fetch(API_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'like', deploymentId: DEPLOYMENT_ID, postId: id })
+            body: JSON.stringify({ action: 'like', deploymentId: DEPLOYMENT_ID, postId: id, userId: state.user.id })
           });
         } catch (err) {
           console.error(err);
@@ -1609,9 +1780,10 @@
         author,
         time: '방금 전',
         likes: 0,
-        comments: 0
+        commentList: []
       });
 
+      document.getElementById('post-content').value = '';
       closePostModal();
       selectCommSchoolTab('all');
       showToast('커뮤니티에 글이 등록되었습니다.');
