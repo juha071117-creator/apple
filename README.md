@@ -61,3 +61,12 @@ git push -u origin main
 ## 라이선스
 
 이 프로젝트는 MIT License를 따릅니다.
+
+
+## Google Sheets 연동
+
+- Google Apps Script 웹 앱 주소는 `js/main.js`, `js/app.js`, `index.html`에 설정되어 있습니다.
+- 학습계획 저장 시 `POST` 요청으로 JSON 데이터를 전송합니다.
+- 브라우저의 CORS 제한 때문에 `no-cors` 방식으로 요청하므로 화면에서 서버의 실제 처리 결과를 판독할 수 없습니다. Google 스프레드시트에서 행이 추가되었는지 확인해야 합니다.
+- Apps Script 배포 설정에서 웹 앱 접근 권한을 앱 사용자가 접근할 수 있도록 설정하고, `doPost(e)`가 요청 본문의 JSON을 읽어 시트에 기록하도록 구성되어 있어야 합니다.
+- 이 프로젝트 파일에는 Apps Script 서버 코드가 포함되어 있지 않으므로, 시트 탭 이름과 열 구조 및 `doPost(e)` 구현은 배포된 스크립트 설정에 따릅니다.

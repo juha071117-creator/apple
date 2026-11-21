@@ -97,7 +97,7 @@ function renderHashtags(type) {
 }
 
 // Google Sheets 학습계획 저장용 웹 앱 주소
-const PLAN_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyQMEHIiEe5vviVt3qIFZ4QMj9pFouCjXV5BNZcXJpSMP5LayS5M3yZVPsFTHu8EAj3CA/exec';
+const PLAN_SHEET_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwmonG39ORs7Ze2mW6CUDNOdnHTzY0M5N34ywZa_NB2mriuqA42BCqVlFnaZXjdG3uP/exec';
 
 async function savePlan() {
   const form = document.getElementById('plan-form');
