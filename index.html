@@ -838,6 +838,7 @@
     // 1. 앱 실행 스플래시 & 로딩 시퀀스
     // ---------------------------------------------------------
     window.addEventListener('DOMContentLoaded', () => {
+      loadAppState();
       let progress = 0;
       const bar = document.getElementById('loading-bar');
       const timer = setInterval(() => {
@@ -1001,6 +1002,7 @@
       if (target) {
         target.done = !target.done;
         if (target.done) target.dueLabel = '완료됨';
+        saveAppState();
       }
       renderUrgentHomeworks();
       renderMyPage();
@@ -1031,6 +1033,7 @@
         done: false
       });
 
+      saveAppState();
       document.getElementById('hw-subject').value = '';
       document.getElementById('hw-title').value = '';
       closeHomeworkModal();
@@ -1105,6 +1108,7 @@
         ddayText = diff <= 0 ? 'D-Day' : `D-${diff}`;
       }
       state.ddays.push({ id: Date.now(), title, ddayText });
+      saveAppState();
       document.getElementById('dday-title-input').value = '';
       closeDdayModal();
       renderDdays();
@@ -1143,6 +1147,7 @@
         url: urlVal
       });
 
+      saveAppState();
       renderHomeRecentPlan();
       renderExplore('all');
       renderMyPage();
@@ -1230,10 +1235,136 @@
     function runAiGenerator() {
       const keyword = document.getElementById('ai-keyword-input').value.trim();
       const url = document.getElementById('ai-material-url').value.trim();
-      const fileName = document.getElementById('ai-file-name').innerText;
-
-      if (!keyword && !url && !fileName) {
-        return alert('강의교안 사진/파일을 첨부하거나 키워드 또는 URL을 입력해주세요.');
+      const fileInput = document.getElementById('ai-photo-input');
+      const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+      if (!keyword && !url && !file) {
+        alert('강의교안 사진/파일을 첨부하거나 키워드 또는 URL을 입력해주세요.');
+        return;
       }
+      const title = keyword || (file ? file.name : '교안 링크 학습');
+      latestAiRequest = {
+        id: Date.now(), title: title + ' - 문제 생성 요청', keyword,
+        date: new Date().toLocaleDateString('ko-KR'),
+        summary: '입력한 키워드와 첨부 정보를 기준으로 생성 요청을 준비했습니다. 실제 AI 문제 생성 서버 연결은 필요합니다.'
+      };
+      document.getElementById('ai-result-content').textContent = latestAiRequest.summary;
+      document.getElementById('ai-result-box').classList.remove('hidden');
+      alert('요청 내용을 준비했습니다. 실제 AI 문제 생성은 서버 연결 후 사용할 수 있습니다.');
+    }
 
-      const topic = keyword || '첨
+    let activeCommunityCategory = 'all';
+    let latestAiRequest = null;
+
+    function selectCommSchoolTab(type) {
+      activeCommunityCategory = type;
+      ['all','univ','high','mid','etc'].forEach(t => {
+        const b = document.getElementById('comm-tab-' + t);
+        if (!b) return;
+        b.className = t === type
+          ? 'px-3 py-1 rounded-full bg-indigo-600 text-white shrink-0'
+          : 'px-3 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0';
+      });
+      const tags = state.schoolHashtags[type] || state.schoolHashtags.all;
+      document.getElementById('comm-hashtag-list').innerHTML = tags.map(t =>
+        `<span class="px-2 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-semibold">${t}</span>`
+      ).join('');
+      renderCommunityPosts(type);
+    }
+
+    function renderCommunityPosts(type='all') {
+      const feed = document.getElementById('community-feed-list');
+      if (!feed) return;
+      const posts = state.posts.filter(p => type === 'all' || p.schoolType === type);
+      feed.innerHTML = posts.length ? posts.map(p => `
+        <article class="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm space-y-2">
+          <div class="flex justify-between gap-2"><span class="text-[10px] font-bold text-indigo-600">${p.schoolBadge} · ${p.schoolName}</span><small class="text-slate-400">${p.time || ''}</small></div>
+          <h3 class="text-sm font-extrabold">${p.subject} · ${p.exam}</h3>
+          <div class="flex flex-wrap gap-1">${(p.tags||[]).map(t=>`<span class="text-[10px] bg-slate-100 px-2 py-1 rounded">${t}</span>`).join('')}</div>
+          <p class="text-xs leading-relaxed text-slate-600 whitespace-pre-wrap">${p.content}</p>
+          <div class="flex justify-between text-[10px] text-slate-400"><span>${p.author || '익명'}</span><span>좋아요 ${p.likes||0} · 댓글 ${p.comments||0}</span></div>
+        </article>`).join('') : '<p class="text-xs text-center text-slate-400 py-8">아직 게시글이 없습니다.</p>';
+    }
+
+    function openPostModal() {
+      document.getElementById('post-modal').classList.remove('hidden');
+      renderPostModalTags();
+    }
+    function closePostModal() { document.getElementById('post-modal').classList.add('hidden'); }
+    function renderPostModalTags() {
+      const type = document.getElementById('post-school-type').value;
+      const tags = state.schoolHashtags[type] || [];
+      document.getElementById('post-modal-tags').innerHTML = tags.map((tag,i) =>
+        `<label class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600"><input class="mr-1" type="checkbox" value="${tag}" ${i<1?'':' '}>${tag}</label>`
+      ).join('');
+    }
+    function submitCommunityPost() {
+      const type = document.getElementById('post-school-type').value;
+      const schoolName = document.getElementById('post-school-name').value.trim();
+      const subject = document.getElementById('post-subject').value.trim();
+      const exam = document.getElementById('post-exam').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+      if (!schoolName || !subject || !exam || !content) return alert('필수 항목을 모두 입력해 주세요.');
+      const badge = ({univ:'대학교',high:'고등학교',mid:'중학교',etc:'자격증·N수'})[type];
+      const tags = [...document.querySelectorAll('#post-modal-tags input:checked')].map(x=>x.value);
+      state.posts.unshift({id:Date.now(),schoolType:type,schoolBadge:badge,schoolName,subject,exam,tags,content,author:document.getElementById('post-anon').checked?'익명':state.user.id,time:'방금 전',likes:0,comments:0});
+      saveAppState();
+      document.querySelector('#post-modal form').reset();
+      closePostModal();
+      selectCommSchoolTab(activeCommunityCategory);
+    }
+
+    function saveAiResultToExplore() {
+      if (!latestAiRequest) return alert('먼저 AI 문제 생성 요청을 입력해 주세요.');
+      state.aiQuizzes.unshift(latestAiRequest);
+      saveAppState();
+      renderExplore('all');
+      alert('요청 내용을 보관함에 저장했습니다. 실제 문제 생성 결과는 아닙니다.');
+    }
+
+    function openMySubPage(type) {
+      const titles = {school:'학교 · 소속 정보',plans:'학습계획 보관함',ai:'AI 문제지 보관함',settings:'개인 설정 및 알림'};
+      document.getElementById('mysubpage-title').textContent = titles[type] || '상세 관리';
+      const body = document.getElementById('mysubpage-body');
+      if (type === 'school') body.innerHTML = `<p><b>아이디</b>: ${state.user.id}</p><p><b>학교·소속</b>: ${state.user.schoolName}</p><p><b>구분</b>: ${state.user.schoolType}</p>`;
+      else if (type === 'plans') body.innerHTML = state.plans.map(p=>`<div class="p-3 bg-slate-50 rounded-xl"><b>${p.subject} · ${p.exam}</b><p class="mt-1">${p.period}</p><p>${p.content}</p></div>`).join('') || '<p>저장된 계획이 없습니다.</p>';
+      else if (type === 'ai') body.innerHTML = state.aiQuizzes.map(q=>`<div class="p-3 bg-slate-50 rounded-xl"><b>${q.title}</b><p class="mt-1">${q.summary}</p></div>`).join('') || '<p>저장된 문제지가 없습니다.</p>';
+      else body.innerHTML = '<p>이 브라우저에 저장된 정보는 이 기기에서만 사용할 수 있습니다.</p>';
+      document.getElementById('mysubpage-modal').classList.remove('hidden');
+    }
+    function closeMySubPage() { document.getElementById('mysubpage-modal').classList.add('hidden'); }
+    function renderMyPage() {
+      const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+      put('mypage-username',state.user.id); put('mypage-school-name',state.user.schoolName); put('mypage-school-badge',state.user.schoolType);
+      put('stat-total-plans',state.plans.length+'개'); put('stat-done-hw',state.homeworks.filter(x=>x.done).length+'건');
+      const list=document.getElementById('mypage-linked-plans');
+      if(list) list.innerHTML=state.plans.slice(0,3).map(p=>`<div class="p-2 rounded-lg bg-slate-50"><b>${p.subject}</b><p class="text-slate-500">${p.exam} · ${p.progress}%</p></div>`).join('');
+    }
+
+    function saveAppState() {
+      try {
+        localStorage.setItem('studymate-app-state-v1', JSON.stringify({
+          user: state.user, homeworks: state.homeworks, plans: state.plans,
+          aiQuizzes: state.aiQuizzes, ddays: state.ddays, posts: state.posts
+        }));
+        return true;
+      } catch (error) {
+        console.error('데이터 저장 실패:', error);
+        return false;
+      }
+    }
+
+    function loadAppState() {
+      try {
+        const raw = localStorage.getItem('studymate-app-state-v1');
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        ['user','homeworks','plans','aiQuizzes','ddays','posts'].forEach(key => {
+          if (saved[key] !== undefined) state[key] = saved[key];
+        });
+      } catch (error) { console.warn('저장 데이터 불러오기 실패:', error); }
+    }
+
+    window.addEventListener('beforeunload', saveAppState);
+  </script>
+</body>
+</html>
